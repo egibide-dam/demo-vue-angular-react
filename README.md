@@ -1,6 +1,6 @@
 # demo-vue-angular-react
 
-Demo.
+Demo de diferentes frameworks JavaScript.
 
 ## Referencias
 
