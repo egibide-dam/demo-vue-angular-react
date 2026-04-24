@@ -16,13 +16,13 @@ _header:
 	@echo ----------------------
 
 demo-vue:
-	@cd vue-demo && npm run dev
+	@cd vue-demo && npm install && npm run dev
 
 demo-angular:
-	@cd angular-demo && npm start
+	@cd angular-demo && npm install && npm start
 
 demo-next:
-	@cd react-next-demo   && npm run dev
+	@cd react-next-demo && npm install && npm run dev
 
 demo-router:
-	@cd react-router-demo && npm run dev
+	@cd react-router-demo && npm install && npm run dev
