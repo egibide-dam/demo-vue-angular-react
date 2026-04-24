@@ -1,14 +1,10 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StorageService } from './services/storage.service';
-
-type Cell = 'X' | 'O' | null;
-
-interface Score {
-  X: number;
-  O: number;
-  draws: number;
-}
+import { Cell, Score } from './models/game.types';
+import { GameBoardComponent } from './components/game-board/game-board.component';
+import { GameControlsComponent } from './components/game-controls/game-controls.component';
+import { GameScoreboardComponent } from './components/game-scoreboard/game-scoreboard.component';
 
 const WINNING_COMBINATIONS: [number, number, number][] = [
   [0, 1, 2], [3, 4, 5], [6, 7, 8],
@@ -19,7 +15,7 @@ const WINNING_COMBINATIONS: [number, number, number][] = [
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, GameBoardComponent, GameControlsComponent, GameScoreboardComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
@@ -31,9 +27,6 @@ export class App {
   gameOver = signal(false);
   winner = signal<'X' | 'O' | null>(null);
   score = signal<Score>(this.storage.get<Score>('tictactoe-score', { X: 0, O: 0, draws: 0 }));
-
-  rows = [0, 1, 2];
-  cols = [0, 1, 2];
 
   statusMessage = computed(() => {
     if (this.winner()) return `¡Gana ${this.winner()}!`;
@@ -47,11 +40,6 @@ export class App {
     if (this.gameOver()) return 'bg-secondary';
     return this.currentPlayer() === 'X' ? 'bg-primary' : 'bg-danger';
   });
-
-  cellClass(cell: Cell): string {
-    if (!cell) return 'btn-outline-secondary';
-    return cell === 'X' ? 'btn-primary' : 'btn-danger';
-  }
 
   private checkWinner(b: Cell[]): 'X' | 'O' | null {
     for (const [a, c, d] of WINNING_COMBINATIONS) {

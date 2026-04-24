@@ -1,57 +1,27 @@
 <div class="container py-4">
+  <!-- El título y el subtítulo permanecen en AppComponent, no son componentes -->
   <h1 class="text-center mb-1">Tres en Raya</h1>
-  <p class="text-center text-muted mb-4"><a href="https://angular.dev" target="_blank" rel="noopener noreferrer">Angular 21</a></p>
+  <p class="text-center text-muted mb-4">
+    <a href="https://angular.dev" target="_blank" rel="noopener noreferrer">Angular 21</a>
+  </p>
 
-  <div class="d-flex flex-column align-items-center mb-3">
-    <div *ngFor="let row of rows" class="d-flex">
-      <button
-        *ngFor="let col of cols"
-        class="btn m-1 fw-bold fs-2"
-        [ngClass]="cellClass(board()[row * 3 + col])"
-        style="width: 90px; height: 90px;"
-        (click)="handleClick(row * 3 + col)"
-      >
-        {{ board()[row * 3 + col] }}
-      </button>
-    </div>
-  </div>
+  <!-- [board], [statusMessage], [statusClass]: property binding, pasa datos al hijo.
+       (cellClick): event binding, escucha el evento emitido por GameBoard. -->
+  <app-game-board
+    [board]="board()"
+    [statusMessage]="statusMessage()"
+    [statusClass]="statusClass()"
+    (cellClick)="handleClick($event)"
+  />
 
-  <div class="text-center mb-3">
-    <span class="badge fs-5 px-4 py-2" [ngClass]="statusClass()">
-      {{ statusMessage() }}
-    </span>
-  </div>
+  <!-- GameControls no recibe datos; solo escuchamos sus eventos de salida. -->
+  <app-game-controls
+    (newGame)="newGame()"
+    (resetScore)="resetScore()"
+  />
 
-  <div class="text-center mb-4">
-    <button class="btn btn-success me-2" (click)="newGame()">Nueva partida</button>
-    <button class="btn btn-outline-secondary" (click)="resetScore()">Resetear marcador</button>
-  </div>
-
-  <div class="row justify-content-center g-3 text-center">
-    <div class="col-auto">
-      <div class="card" style="min-width: 110px;">
-        <div class="card-body">
-          <h5 class="card-title text-primary">X</h5>
-          <p class="display-5 mb-0">{{ score().X }}</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-auto">
-      <div class="card" style="min-width: 110px;">
-        <div class="card-body">
-          <h5 class="card-title text-secondary">Empates</h5>
-          <p class="display-5 mb-0">{{ score().draws }}</p>
-        </div>
-      </div>
-    </div>
-    <div class="col-auto">
-      <div class="card" style="min-width: 110px;">
-        <div class="card-body">
-          <h5 class="card-title text-danger">O</h5>
-          <p class="display-5 mb-0">{{ score().O }}</p>
-        </div>
-      </div>
-    </div>
-  </div>
+  <!-- [score]: pasamos la señal evaluada al componente hijo como input.
+       Angular detecta los cambios en la señal y re-renderiza GameScoreboard. -->
+  <app-game-scoreboard [score]="score()" />
 </div>
 
