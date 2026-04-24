@@ -1,6 +1,9 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useLocalStorage } from '../composables/useLocalStorage.js'
+import GameBoard from '../components/GameBoard.vue'
+import GameControls from '../components/GameControls.vue'
+import GameScoreboard from '../components/GameScoreboard.vue'
 
 const WINNING_COMBINATIONS = [
   [0, 1, 2], [3, 4, 5], [6, 7, 8],
@@ -64,69 +67,35 @@ const statusClass = computed(() => {
   if (gameOver.value) return 'bg-secondary'
   return currentPlayer.value === 'X' ? 'bg-primary' : 'bg-danger'
 })
-
-function cellClass(cell) {
-  if (!cell) return 'btn-outline-secondary'
-  return cell === 'X' ? 'btn-primary' : 'btn-danger'
-}
 </script>
 
 <template>
   <div class="container py-4">
+    <!-- El título y el subtítulo permanecen en la vista, no son componentes -->
     <h1 class="text-center mb-1">Tres en Raya</h1>
-    <p class="text-center text-muted mb-4"><a href="https://vuejs.org" target="_blank" rel="noopener noreferrer">Vue 3</a></p>
+    <p class="text-center text-muted mb-4">
+      <a href="https://vuejs.org" target="_blank" rel="noopener noreferrer">Vue 3</a>
+    </p>
 
-    <div class="d-flex flex-column align-items-center mb-3">
-      <div v-for="row in [0, 1, 2]" :key="row" class="d-flex">
-        <button
-          v-for="col in [0, 1, 2]"
-          :key="col"
-          class="btn m-1 fw-bold fs-2"
-          :class="cellClass(board[row * 3 + col])"
-          style="width: 90px; height: 90px;"
-          @click="handleClick(row * 3 + col)"
-        >
-          {{ board[row * 3 + col] }}
-        </button>
-      </div>
-    </div>
+    <!-- GameBoard recibe el estado del tablero y los textos del badge como props (:prop).
+         Escuchamos el evento 'cell-click' con @cell-click para procesar el movimiento. -->
+    <GameBoard
+      :board="board"
+      :status-message="statusMessage"
+      :status-class="statusClass"
+      @cell-click="handleClick"
+    />
 
-    <div class="text-center mb-3">
-      <span class="badge fs-5 px-4 py-2" :class="statusClass">
-        {{ statusMessage }}
-      </span>
-    </div>
+    <!-- GameControls no necesita datos; solo emite eventos que mapeamos
+         a las funciones de esta vista con @new-game y @reset-score. -->
+    <GameControls
+      @new-game="newGame"
+      @reset-score="resetScore"
+    />
 
-    <div class="text-center mb-4">
-      <button class="btn btn-success me-2" @click="newGame">Nueva partida</button>
-      <button class="btn btn-outline-secondary" @click="resetScore">Resetear marcador</button>
-    </div>
-
-    <div class="row justify-content-center g-3 text-center">
-      <div class="col-auto">
-        <div class="card" style="min-width: 110px;">
-          <div class="card-body">
-            <h5 class="card-title text-primary">X</h5>
-            <p class="display-5 mb-0">{{ score.X }}</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-auto">
-        <div class="card" style="min-width: 110px;">
-          <div class="card-body">
-            <h5 class="card-title text-secondary">Empates</h5>
-            <p class="display-5 mb-0">{{ score.draws }}</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-auto">
-        <div class="card" style="min-width: 110px;">
-          <div class="card-body">
-            <h5 class="card-title text-danger">O</h5>
-            <p class="display-5 mb-0">{{ score.O }}</p>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- GameScoreboard recibe el objeto score como prop de solo lectura.
+         Vue lo mantiene reactivo: cuando score cambia aquí, el componente
+         hijo se re-renderiza automáticamente. -->
+    <GameScoreboard :score="score" />
   </div>
 </template>
