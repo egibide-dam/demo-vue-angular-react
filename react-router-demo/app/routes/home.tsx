@@ -96,7 +96,7 @@ export default function Home() {
   return (
     <div className="container py-4">
       <h1 className="text-center mb-1">Tres en Raya</h1>
-      <p className="text-center text-muted mb-4">React Router 7</p>
+      <p className="text-center text-muted mb-4"><a href="https://reactrouter.com" target="_blank" rel="noopener noreferrer">React Router 7</a></p>
 
       <div className="d-flex flex-column align-items-center mb-3">
         {[0, 1, 2].map((row) => (
