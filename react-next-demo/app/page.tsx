@@ -2,14 +2,10 @@
 
 import { useState } from 'react'
 import { useLocalStorage } from './hooks/useLocalStorage'
-
-type Cell = 'X' | 'O' | null
-
-interface Score {
-  X: number
-  O: number
-  draws: number
-}
+import { Cell, Score } from './types/game'
+import GameBoard from './components/GameBoard'
+import GameControls from './components/GameControls'
+import GameScoreboard from './components/GameScoreboard'
 
 const WINNING_COMBINATIONS: [number, number, number][] = [
   [0, 1, 2], [3, 4, 5], [6, 7, 8],
@@ -26,14 +22,10 @@ function checkWinner(board: Cell[]): 'X' | 'O' | null {
   return null
 }
 
-function cellClass(cell: Cell): string {
-  if (!cell) return 'btn btn-outline-secondary fw-bold fs-2 m-1'
-  return cell === 'X'
-    ? 'btn btn-primary fw-bold fs-2 m-1'
-    : 'btn btn-danger fw-bold fs-2 m-1'
-}
-
 export default function Home() {
+  // Todo el estado vive aquí (patrón "lifting state up").
+  // Los componentes hijos reciben datos como props y notifican cambios
+  // mediante callbacks también pasados como props.
   const [board, setBoard] = useState<Cell[]>(Array(9).fill(null))
   const [currentPlayer, setCurrentPlayer] = useState<'X' | 'O'>('X')
   const [gameOver, setGameOver] = useState(false)
@@ -89,68 +81,26 @@ export default function Home() {
 
   return (
     <div className="container py-4">
+      {/* El título y el subtítulo permanecen en la página, no son componentes */}
       <h1 className="text-center mb-1">Tres en Raya</h1>
-      <p className="text-center text-muted mb-4"><a href="https://nextjs.org" target="_blank" rel="noopener noreferrer">Next.js 16</a></p>
+      <p className="text-center text-muted mb-4">
+        <a href="https://nextjs.org" target="_blank" rel="noopener noreferrer">Next.js 16</a>
+      </p>
 
-      <div className="d-flex flex-column align-items-center mb-3">
-        {[0, 1, 2].map((row) => (
-          <div key={row} className="d-flex">
-            {[0, 1, 2].map((col) => {
-              const index = row * 3 + col
-              return (
-                <button
-                  key={col}
-                  className={cellClass(board[index])}
-                  style={{ width: 90, height: 90 }}
-                  onClick={() => handleClick(index)}
-                >
-                  {board[index]}
-                </button>
-              )
-            })}
-          </div>
-        ))}
-      </div>
+      {/* GameBoard recibe el tablero y los textos del badge como props.
+          onCellClick es el callback que ejecutará cuando el usuario pulse una celda. */}
+      <GameBoard
+        board={board}
+        statusMessage={statusMessage()}
+        statusClass={statusClass()}
+        onCellClick={handleClick}
+      />
 
-      <div className="text-center mb-3">
-        <span className={statusClass()}>{statusMessage()}</span>
-      </div>
+      {/* GameControls solo necesita los callbacks; no hay datos que pasarle. */}
+      <GameControls onNewGame={newGame} onResetScore={resetScore} />
 
-      <div className="text-center mb-4">
-        <button className="btn btn-success me-2" onClick={newGame}>
-          Nueva partida
-        </button>
-        <button className="btn btn-outline-secondary" onClick={resetScore}>
-          Resetear marcador
-        </button>
-      </div>
-
-      <div className="row justify-content-center g-3 text-center">
-        <div className="col-auto">
-          <div className="card" style={{ minWidth: 110 }}>
-            <div className="card-body">
-              <h5 className="card-title text-primary">X</h5>
-              <p className="display-5 mb-0">{score.X}</p>
-            </div>
-          </div>
-        </div>
-        <div className="col-auto">
-          <div className="card" style={{ minWidth: 110 }}>
-            <div className="card-body">
-              <h5 className="card-title text-secondary">Empates</h5>
-              <p className="display-5 mb-0">{score.draws}</p>
-            </div>
-          </div>
-        </div>
-        <div className="col-auto">
-          <div className="card" style={{ minWidth: 110 }}>
-            <div className="card-body">
-              <h5 className="card-title text-danger">O</h5>
-              <p className="display-5 mb-0">{score.O}</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* GameScoreboard es un componente presentacional puro: solo recibe datos. */}
+      <GameScoreboard score={score} />
     </div>
   )
 }
