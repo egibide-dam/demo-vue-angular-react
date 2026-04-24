@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router'
 import type { Route } from './+types/home'
 import { useLocalStorage } from '../hooks/useLocalStorage'
 import type { Cell, Score } from '../types/game'
@@ -87,6 +88,9 @@ export default function Home() {
 
   return (
     <div className="container py-4">
+      <div className="text-end mb-2">
+        <Link to="/about" className="text-muted small">Acerca de</Link>
+      </div>
       {/* El título y el subtítulo permanecen en la ruta, no son componentes */}
       <h1 className="text-center mb-1">Tres en Raya</h1>
       <p className="text-center text-muted mb-4">
