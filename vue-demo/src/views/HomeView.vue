@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue'
+import { RouterLink } from 'vue-router'
 import { useLocalStorage } from '../composables/useLocalStorage.js'
 import GameBoard from '../components/GameBoard.vue'
 import GameControls from '../components/GameControls.vue'
@@ -71,6 +72,12 @@ const statusClass = computed(() => {
 
 <template>
   <div class="container py-4">
+    <!-- RouterLink genera un <a> que navega sin recargar la página (SPA).
+         'to' acepta el nombre de la ruta o la ruta literal. -->
+    <div class="text-end mb-2">
+      <RouterLink to="/about" class="text-muted small">Acerca de</RouterLink>
+    </div>
+
     <!-- El título y el subtítulo permanecen en la vista, no son componentes -->
     <h1 class="text-center mb-1">Tres en Raya</h1>
     <p class="text-center text-muted mb-4">
