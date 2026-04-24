@@ -73,7 +73,8 @@ function cellClass(cell) {
 
 <template>
   <div class="container py-4">
-    <h1 class="text-center mb-4">Tres en Raya</h1>
+    <h1 class="text-center mb-1">Tres en Raya</h1>
+    <p class="text-center text-muted mb-4">Vue 3</p>
 
     <div class="d-flex flex-column align-items-center mb-3">
       <div v-for="row in [0, 1, 2]" :key="row" class="d-flex">
